@@ -12,7 +12,7 @@ $url = 'https://graph.facebook.com/v2.6/me/messages?access_token=EAAH9ZB08zbAwBA
 
 // use key 'http' even if you send the request to https://...
 $postData = array(
-    'recipient' => array('id' => $user_id);
+    'recipient' => array('id' => $user_id)
     'message' => array('text' => 'hello, world!')
 );
 $context = stream_context_create(array(
