@@ -13,6 +13,7 @@ function generateRandomString($length = 10) {
 	return $randomString;
 } 
 
+$counter=1;
 $isGame = array();
 $gameHoster = array();
 $input = json_decode(file_get_contents('php://input'), true);
@@ -33,10 +34,11 @@ $message_to_reply = '';
     $message_to_reply = 'Huh! what do you mean?';
 }*/
 if(preg_match('[start game]', strtolower($message))) {
+	$counter=$counter+1;
 	$gameID=generateRandomString();
 	$isGame[$gameID]=true;
 	$gameHoster[$gameID]=$sender;
-	$message_to_reply = $gameID;
+	$message_to_reply = $gameID+$counter;
 } else {
 	$message_to_reply = 'Mafia incoming! Stay tuned!';
 }
