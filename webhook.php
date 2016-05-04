@@ -26,7 +26,7 @@ $message_to_reply = 'Mafia incoming! Stay tuned!';
 //API Url
 $url = 'https://graph.facebook.com/v2.6/me/messages?access_token='.$access_token;
 
-send($url,$sender,$message_to_reply);
+sendString($url,$sender,$message_to_reply);
 //Initiate cURL
 function sendString($url,$sender,$response) {
 	$ch = curl_init($url);
