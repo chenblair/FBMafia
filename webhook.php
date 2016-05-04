@@ -6,7 +6,8 @@ $verify_token = $_REQUEST['hub_verify_token'];
 if ($verify_token === 'my_token_code') {
 	echo $challenge;
 }
-<script type="text/javascript">
+?>
+<script>
 app.post('/webhook/', function (req, res) {
 	messaging_events = req.body.entry[0].messaging;
 	for (i = 0; i < messaging_events.length; i++) {
@@ -14,7 +15,7 @@ app.post('/webhook/', function (req, res) {
 		sender = event.sender.id;
 		if (event.message && event.message.text) {
 			text = event.message.text;
-      // Handle a text message from this sender
+     		console.log(text);
 		}
 	}
 	res.sendStatus(200);
