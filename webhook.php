@@ -7,7 +7,27 @@ if ($verify_token === 'my_token_code') {
 echo $challenge;
 }
 
-$user_id=10206390442655882;
+$access_token='EAAH9ZB08zbAwBABRz7DxBQmGJOdvdhlOqurYBe3PcFaeCNVJ6ZC6WTZCx6olTkDPW3n192p36heKEriSkYGC58ZAotSBPQDZB0QbLRhnJ0OaIZBjBKn9C1B98jOKP4JHXdJtS53vcgMs4GDO02rQXIWeisNFVk50nxY1WwwIpU0gZDZD';
+
+$url='https://graph.facebook.com/v2.6/me/subscribed_apps?access_token='+access_token;
+$context = stream_context_create(array(
+    'http' => array(
+        'method' => 'POST',
+    )
+));
+$result = file_get_contents($url, false, $context);
+if ($result === FALSE) 
+{ 
+	die('Error');
+}
+
+// Decode the response
+$responseData = json_decode($response, TRUE);
+
+// Print the date from the response
+echo $responseData;
+
+/*$user_id=10206390442655882;
 $url = 'https://graph.facebook.com/v2.6/me/messages?access_token=EAAH9ZB08zbAwBABRz7DxBQmGJOdvdhlOqurYBe3PcFaeCNVJ6ZC6WTZCx6olTkDPW3n192p36heKEriSkYGC58ZAotSBPQDZB0QbLRhnJ0OaIZBjBKn9C1B98jOKP4JHXdJtS53vcgMs4GDO02rQXIWeisNFVk50nxY1WwwIpU0gZDZD';
 
 // use key 'http' even if you send the request to https://...
@@ -33,4 +53,4 @@ if ($result === FALSE)
 $responseData = json_decode($response, TRUE);
 
 // Print the date from the response
-echo $responseData;
+echo $responseData;*/
