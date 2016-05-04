@@ -15,7 +15,7 @@ $context = stream_context_create(array(
         'method' => 'POST',
     )
 ));
-$result = file_get_contents($url, false, $context);
+$result = file_get_contents($url, false, NULL);
 if ($result === FALSE) 
 { 
 	die('Error');
