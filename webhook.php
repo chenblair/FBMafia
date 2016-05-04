@@ -23,7 +23,6 @@ function sendString($url,$sender,$response) {
 	if(!empty($input['entry'][0]['messaging'][0]['message'])){
 		$result = curl_exec($ch);
 	}
-	return $result;
 }
 
 $access_token = "EAAH9ZB08zbAwBAPv86uoe8TZBKyMxr8ZANzUlDs9ujKWdIJpHZAktTun7A7UZA8Mqq3b21a9ZA1ZC3Nb5XWzZBfvNw1pgWfyvbNIxlYuhnrQoBLl4NbhWxxwa2N2EwOPqdocyxB0HZBP9Wddfn9JW1rYOQ0dYwNB8ulkJNVcJdZCquOAZDZD";
