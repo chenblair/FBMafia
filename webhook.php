@@ -55,7 +55,6 @@ $message_to_reply = '';
     $message_to_reply = 'Huh! what do you mean?';
 }*/
 if(preg_match('[start game]', strtolower($message))) {
-	$counter=$counter+1;
 	$gameID=generateRandomString();
 	$isGame[$gameID]=true;
 	$gameHoster[$gameID]=$sender;
