@@ -23,14 +23,14 @@ $myPDO = new PDO('pgsql:host='+$dbHost+';dbname='+$dbName, $dbUsername, $dbName)
 # This function reads your DATABASE_URL configuration automatically set by Heroku
 # the return value is a string that will work with pg_connect
 function pg_connection_string() {
-  return "dbname=d270g74n5lg3ni host=ec2-50-16-218-45.compute-1.amazonaws.com port=5432 user=iuyrqoboxxpsri password=KuNsezJCq0rW4MeF2d2AyWKjE8 sslmode=require";
+	return "dbname=d270g74n5lg3ni host=ec2-50-16-218-45.compute-1.amazonaws.com port=5432 user=iuyrqoboxxpsri password=KuNsezJCq0rW4MeF2d2AyWKjE8 sslmode=require";
 }
- 
+
 # Establish db connection
 $db = pg_connect(pg_connection_string());
 if (!$db) {
-    echo "Database connection error.";
-    exit;
+	echo "Database connection error.";
+	exit;
 }
 $query= pg_query($db, "SELECT * FROM players;");
 $row=pg_fetch_assoc($query);
@@ -40,6 +40,12 @@ $input = json_decode(file_get_contents('php://input'), true);
 $sender = $input['entry'][0]['messaging'][0]['sender']['id'];
 $message = $input['entry'][0]['messaging'][0]['message']['text'];
 $message_to_reply = '';
+
+//API Url
+$url = 'https://graph.facebook.com/v2.6/me/messages?access_token='.$access_token;
+//Initiate cURL.
+$ch = curl_init($url);
+
 /**
  * Some Basic rules to validate incoming messages
  */
@@ -57,14 +63,31 @@ if(preg_match('[start game]', strtolower($message))) {
 		$hoster=$row['userid'];
 		pg_query($db, "INSERT INTO players (userid,gameid,ishost) VALUES ('$sender','$game',FALSE);");
 		$message_to_reply='You have been successfully added to game '.$game.' hosted by '.$hoster.'!';
+		$jsonData = '{
+			"recipient":{
+				"id":"'.$hoster.'"
+			},
+			"message":{
+				"text":"'.$sender.'has just been added to your game!'.'"
+			}
+		}';
+//Encode the array into JSON.
+		$jsonDataEncoded = $jsonData;
+//Tell cURL that we want to send a POST request.
+		curl_setopt($ch, CURLOPT_POST, 1);
+//Attach our encoded JSON string to the POST fields.
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonDataEncoded);
+//Set the content type to application/json
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+//curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+//Execute the request
+		if(!empty($input['entry'][0]['messaging'][0]['message'])){
+			$result = curl_exec($ch);
+		}
 	}
 } else {
 	$message_to_reply = 'Mafia incoming! Stay tuned!';
 }
-//API Url
-$url = 'https://graph.facebook.com/v2.6/me/messages?access_token='.$access_token;
-//Initiate cURL.
-$ch = curl_init($url);
 //The JSON data.
 
 $jsonData = '{
