@@ -3,6 +3,12 @@ $access_token = "EAAH9ZB08zbAwBAPv86uoe8TZBKyMxr8ZANzUlDs9ujKWdIJpHZAktTun7A7UZA
 $verify_token = "my_access_code";
 $hub_verify_token = null;
 
+//API Url
+$url = 'https://graph.facebook.com/v2.6/me/messages?access_token='.$access_token;
+//Initiate cURL.
+$ch = curl_init($url);
+
+
 function generateRandomString($length = 10) {
 	$characters = '0123456789abcdefghijklmnopqrstuvwxyz';
 	$charactersLength = strlen($characters);
@@ -15,26 +21,26 @@ function generateRandomString($length = 10) {
 function sendMessage($recipient,$message)
 {
 	$jsonData = '{
-	"recipient":{
-		"id":"'.$recipient.'"
-	},
-	"message":{
-		"text":"'.$message.'"
-	}
-}';
+		"recipient":{
+			"id":"'.$recipient.'"
+		},
+		"message":{
+			"text":"'.$message.'"
+		}
+	}';
 //Encode the array into JSON.
-$jsonDataEncoded = $jsonData;
+	$jsonDataEncoded = $jsonData;
 //Tell cURL that we want to send a POST request.
-curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POST, 1);
 //Attach our encoded JSON string to the POST fields.
-curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonDataEncoded);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonDataEncoded);
 //Set the content type to application/json
-curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+	curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 //curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
 //Execute the request
-if(!empty($input['entry'][0]['messaging'][0]['message'])){
-	$result = curl_exec($ch);
-}
+	if(!empty($input['entry'][0]['messaging'][0]['message'])){
+		$result = curl_exec($ch);
+	}
 }
 
 //database calls
@@ -64,12 +70,6 @@ $input = json_decode(file_get_contents('php://input'), true);
 $sender = $input['entry'][0]['messaging'][0]['sender']['id'];
 $message = $input['entry'][0]['messaging'][0]['message']['text'];
 $message_to_reply = '';
-
-//API Url
-$url = 'https://graph.facebook.com/v2.6/me/messages?access_token='.$access_token;
-//Initiate cURL.
-$ch = curl_init($url);
-
 /**
  * Some Basic rules to validate incoming messages
  */
