@@ -19,22 +19,17 @@ $dbUsername = 'd5gei6idamag9h';
 $dbPassword = 'y9AcZwkmoyyM6L41Bzk9pebGYD';
 $dbName = 'd5gei6idamag9h';
 $myPDO = new PDO('pgsql:host='+$dbHost+';dbname='+$dbName, $dbUsername, $dbName);*/
-$dbopts = parse_url(getenv('DATABASE_URL'));
-$app->register(new Herrera\Pdo\PdoServiceProvider(),
-               array(
-                   'pdo.dsn' => 'pgsql:dbname='.ltrim($dbopts["path"],'/').';host='.$dbopts["host"] . ';port=' . $dbopts["port"],
-                   'pdo.username' => $dbopts["user"],
-                   'pdo.password' => $dbopts["pass"]
-               )
-);
+$dbHost = 'ec2-50-16-218-45.compute-1.amazonaws.com';
+$dbName = 'd270g74n5lg3ni';
+$dbUsername = 'iuyrqoboxxpsri';
+$dbPassword = 'KuNsezJCq0rW4MeF2d2AyWKjE8';
+$db = new PDO("dbtype:host="+$dbHost+";dbname="+$dbName+";charset=utf8",$dbUsername,$dbPassword);
 $counter='hi';
 
-$app->get('/db/', function() use($app) {
-  $st = $app['pdo']->prepare('SELECT userID FROM players WHERE id=1');
-  $st->execute();
+$st = $db->prepare('SELECT userID FROM players WHERE id=1');
+$st->execute();
+$counter=$st->fetch(PDO::FETCH_OBJ);
 
-  $counter=$st->fetch(PDO::FETCH_ASSOC);
-});
 $isGame = array();
 $gameHoster = array();
 $input = json_decode(file_get_contents('php://input'), true);
