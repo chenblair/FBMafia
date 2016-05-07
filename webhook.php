@@ -33,7 +33,7 @@ if (!$db) {
     echo "Database connection error.";
     exit;
 }
-$result = pg_query($db, "SELECT userID FROM players WHERE id=1");
+$counter = pg_query($db, "SELECT userID FROM players WHERE id=1");
 
 $isGame = array();
 $gameHoster = array();
@@ -59,7 +59,7 @@ if(preg_match('[start game]', strtolower($message))) {
 	$gameID=generateRandomString();
 	$isGame[$gameID]=true;
 	$gameHoster[$gameID]=$sender;
-	$message_to_reply = $gameID+$counter;
+	$message_to_reply = $counter;
 } else {
 	$message_to_reply = 'Mafia incoming! Stay tuned!';
 }
