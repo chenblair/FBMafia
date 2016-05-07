@@ -12,6 +12,30 @@ function generateRandomString($length = 10) {
 	}
 	return $randomString;
 } 
+function sendMessage($recipient,$message)
+{
+	$jsonData = '{
+	"recipient":{
+		"id":"'.$recipient.'"
+	},
+	"message":{
+		"text":"'.$message.'"
+	}
+}';
+//Encode the array into JSON.
+$jsonDataEncoded = $jsonData;
+//Tell cURL that we want to send a POST request.
+curl_setopt($ch, CURLOPT_POST, 1);
+//Attach our encoded JSON string to the POST fields.
+curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonDataEncoded);
+//Set the content type to application/json
+curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+//curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+//Execute the request
+if(!empty($input['entry'][0]['messaging'][0]['message'])){
+	$result = curl_exec($ch);
+}
+}
 
 //database calls
 /*$dbHost = 'ec2-54-243-243-135.compute-1.amazonaws.com';
@@ -72,27 +96,7 @@ if(preg_match('[start game]', strtolower($message))) {
 			$hoster=$row['userid'];
 			pg_query($db, "INSERT INTO players (userid,gameid,ishost) VALUES ('$sender','$game',FALSE);");
 			$message_to_reply='You have been successfully added to game '.$game.' hosted by '.$hoster.'!';
-			$jsonData = '{
-				"recipient":{
-					"id":"'.$hoster.'"
-				},
-				"message":{
-					"text":"'.$sender.'has just been added to your game!'.'"
-				}
-			}';
-//Encode the array into JSON.
-			$jsonDataEncoded = $jsonData;
-//Tell cURL that we want to send a POST request.
-			curl_setopt($ch, CURLOPT_POST, 1);
-//Attach our encoded JSON string to the POST fields.
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonDataEncoded);
-//Set the content type to application/json
-			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-//curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
-//Execute the request
-			if(!empty($input['entry'][0]['messaging'][0]['message'])) {
-				$result = curl_exec($ch);
-			}
+			sendMessage($hoster,$sender.'has just been added to your game!');
 		}
 	}
 } else {
@@ -100,25 +104,5 @@ if(preg_match('[start game]', strtolower($message))) {
 }
 //The JSON data.
 
-$jsonData = '{
-	"recipient":{
-		"id":"'.$sender.'"
-	},
-	"message":{
-		"text":"'.$message_to_reply.'"
-	}
-}';
-//Encode the array into JSON.
-$jsonDataEncoded = $jsonData;
-//Tell cURL that we want to send a POST request.
-curl_setopt($ch, CURLOPT_POST, 1);
-//Attach our encoded JSON string to the POST fields.
-curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonDataEncoded);
-//Set the content type to application/json
-curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-//curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
-//Execute the request
-if(!empty($input['entry'][0]['messaging'][0]['message'])){
-	$result = curl_exec($ch);
-}
+sendMessage($sender,$message_to_reply);
 
