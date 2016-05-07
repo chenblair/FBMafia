@@ -13,7 +13,28 @@ function generateRandomString($length = 10) {
 	return $randomString;
 } 
 
-$counter=1;
+//database calls
+/*$dbHost = 'ec2-54-243-243-135.compute-1.amazonaws.com';
+$dbUsername = 'd5gei6idamag9h';
+$dbPassword = 'y9AcZwkmoyyM6L41Bzk9pebGYD';
+$dbName = 'd5gei6idamag9h';
+$myPDO = new PDO('pgsql:host='+$dbHost+';dbname='+$dbName, $dbUsername, $dbName);*/
+$dbopts = parse_url(getenv('DATABASE_URL'));
+$app->register(new Herrera\Pdo\PdoServiceProvider(),
+               array(
+                   'pdo.dsn' => 'pgsql:dbname='.ltrim($dbopts["path"],'/').';host='.$dbopts["host"] . ';port=' . $dbopts["port"],
+                   'pdo.username' => $dbopts["user"],
+                   'pdo.password' => $dbopts["pass"]
+               )
+);
+$counter='hi';
+
+$app->get('/db/', function() use($app) {
+  $st = $app['pdo']->prepare('SELECT userID FROM players WHERE id=1');
+  $st->execute();
+
+  $counter=$st->fetch(PDO::FETCH_ASSOC);
+});
 $isGame = array();
 $gameHoster = array();
 $input = json_decode(file_get_contents('php://input'), true);
