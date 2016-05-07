@@ -31,8 +31,9 @@ function generateRandomString($length = 10) {
 	}
 	return $randomString;
 } 
-function sendMessage($recipient,$message,$input)
+function sendMessage($recipient,$message)
 {
+	global $input;
 	//Initiate cURL.
 	$ch = curl_init($url);
 	$jsonData = '{
@@ -96,7 +97,7 @@ if(preg_match('[start game]', strtolower($message))) {
 			$hoster=$row['userid'];
 			pg_query($db, "INSERT INTO players (userid,gameid,ishost) VALUES ('$sender','$game',FALSE);");
 			$message_to_reply='You have been successfully added to game '.$game.' hosted by '.$hoster.'!';
-			sendMessage($hoster,$sender.'has just been added to your game!',$input);
+			sendMessage($hoster,$sender.'has just been added to your game!');
 		}
 	}
 } else {
@@ -104,5 +105,5 @@ if(preg_match('[start game]', strtolower($message))) {
 }
 //The JSON data.
 
-sendMessage($sender,$message_to_reply,$input);
+sendMessage($sender,$message_to_reply);
 
