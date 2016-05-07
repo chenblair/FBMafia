@@ -19,7 +19,6 @@ $dbUsername = 'd5gei6idamag9h';
 $dbPassword = 'y9AcZwkmoyyM6L41Bzk9pebGYD';
 $dbName = 'd5gei6idamag9h';
 $myPDO = new PDO('pgsql:host='+$dbHost+';dbname='+$dbName, $dbUsername, $dbName);*/
-$counter='hi';
 
 # This function reads your DATABASE_URL configuration automatically set by Heroku
 # the return value is a string that will work with pg_connect
@@ -49,7 +48,7 @@ if(preg_match('[start game]', strtolower($message))) {
 	pg_query($db, "INSERT INTO players (userid,gameid,ishost) VALUES ('$sender','$gameID',TRUE);");
 	$message_to_reply = $gameID;
 } else if (preg_match('[mafia]', strtolower($message))) {
-	$query= pg_query($db, "SELECT * FROM players WHERE gameid='$message' AND host=TRUE;");
+	$query= pg_query($db, "SELECT * FROM players WHERE gameid='$message';");
 	if (pg_num_rows($query)<1) {
 		$message_to_reply='invalid code!';
 	} else {
