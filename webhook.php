@@ -23,7 +23,7 @@ $dbHost = 'ec2-50-16-218-45.compute-1.amazonaws.com';
 $dbName = 'd270g74n5lg3ni';
 $dbUsername = 'iuyrqoboxxpsri';
 $dbPassword = 'KuNsezJCq0rW4MeF2d2AyWKjE8';
-$db = new PDO("dbtype:host="+$dbHost+";dbname="+$dbName+";charset=utf8",$dbUsername,$dbPassword);
+$db = new PDO("dbtype:host=$dbHost+;dbname=$dbName",$dbUsername,$dbPassword);
 $counter='hi';
 
 $st = $db->prepare('SELECT userID FROM players WHERE id=1');
