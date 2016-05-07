@@ -5,8 +5,6 @@ $hub_verify_token = null;
 
 //API Url
 $url = 'https://graph.facebook.com/v2.6/me/messages?access_token='.$access_token;
-//Initiate cURL.
-$ch = curl_init($url);
 
 
 function generateRandomString($length = 10) {
@@ -20,6 +18,8 @@ function generateRandomString($length = 10) {
 } 
 function sendMessage($recipient,$message)
 {
+	//Initiate cURL.
+	$ch = curl_init($url);
 	$jsonData = '{
 		"recipient":{
 			"id":"'.$recipient.'"
