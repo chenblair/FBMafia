@@ -6,6 +6,21 @@ $hub_verify_token = null;
 //API Url
 $url = 'https://graph.facebook.com/v2.6/me/messages?access_token='.$access_token;
 
+# Establish db connection
+$db = pg_connect(pg_connection_string());
+if (!$db) {
+	echo "Database connection error.";
+	exit;
+}
+$query= pg_query($db, "SELECT * FROM players;");
+$row=pg_fetch_assoc($query);
+$counter=$row['userid'];
+
+$input = json_decode(file_get_contents('php://input'), true);
+$sender = $input['entry'][0]['messaging'][0]['sender']['id'];
+$message = $input['entry'][0]['messaging'][0]['message']['text'];
+$message_to_reply = '';
+
 
 function generateRandomString($length = 10) {
 	$characters = '0123456789abcdefghijklmnopqrstuvwxyz';
@@ -16,7 +31,7 @@ function generateRandomString($length = 10) {
 	}
 	return $randomString;
 } 
-function sendMessage($recipient,$message)
+function sendMessage($recipient,$message,$input)
 {
 	//Initiate cURL.
 	$ch = curl_init($url);
@@ -55,21 +70,6 @@ $myPDO = new PDO('pgsql:host='+$dbHost+';dbname='+$dbName, $dbUsername, $dbName)
 function pg_connection_string() {
 	return "dbname=d270g74n5lg3ni host=ec2-50-16-218-45.compute-1.amazonaws.com port=5432 user=iuyrqoboxxpsri password=KuNsezJCq0rW4MeF2d2AyWKjE8 sslmode=require";
 }
-
-# Establish db connection
-$db = pg_connect(pg_connection_string());
-if (!$db) {
-	echo "Database connection error.";
-	exit;
-}
-$query= pg_query($db, "SELECT * FROM players;");
-$row=pg_fetch_assoc($query);
-$counter=$row['userid'];
-
-$input = json_decode(file_get_contents('php://input'), true);
-$sender = $input['entry'][0]['messaging'][0]['sender']['id'];
-$message = $input['entry'][0]['messaging'][0]['message']['text'];
-$message_to_reply = '';
 /**
  * Some Basic rules to validate incoming messages
  */
@@ -96,7 +96,7 @@ if(preg_match('[start game]', strtolower($message))) {
 			$hoster=$row['userid'];
 			pg_query($db, "INSERT INTO players (userid,gameid,ishost) VALUES ('$sender','$game',FALSE);");
 			$message_to_reply='You have been successfully added to game '.$game.' hosted by '.$hoster.'!';
-			sendMessage($hoster,$sender.'has just been added to your game!');
+			sendMessage($hoster,$sender.'has just been added to your game!',$input);
 		}
 	}
 } else {
@@ -104,5 +104,5 @@ if(preg_match('[start game]', strtolower($message))) {
 }
 //The JSON data.
 
-sendMessage($sender,$message_to_reply);
+sendMessage($sender,$message_to_reply,$input);
 
