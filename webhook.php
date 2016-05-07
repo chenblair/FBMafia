@@ -48,7 +48,7 @@ if(preg_match('[start game]', strtolower($message))) {
 	pg_query($db, "INSERT INTO players (userid,gameid,ishost) VALUES ('$sender','$gameID',TRUE);");
 	$message_to_reply = $gameID;
 } else if (preg_match('[mafia]', strtolower($message))) {
-	$query= pg_query($db, "SELECT * FROM players WHERE gameid='$message';");
+	$query= pg_query($db, "SELECT * FROM players WHERE gameid='$message' AND ishost=TRUE;");
 	if (pg_num_rows($query)<1) {
 		$message_to_reply='invalid code!';
 	} else {
