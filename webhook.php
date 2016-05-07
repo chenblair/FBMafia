@@ -19,16 +19,12 @@ $dbUsername = 'd5gei6idamag9h';
 $dbPassword = 'y9AcZwkmoyyM6L41Bzk9pebGYD';
 $dbName = 'd5gei6idamag9h';
 $myPDO = new PDO('pgsql:host='+$dbHost+';dbname='+$dbName, $dbUsername, $dbName);*/
-$dbHost = 'ec2-50-16-218-45.compute-1.amazonaws.com';
-$dbName = 'd270g74n5lg3ni';
-$dbUsername = 'iuyrqoboxxpsri';
-$dbPassword = 'KuNsezJCq0rW4MeF2d2AyWKjE8';
 $counter='hi';
 
 # This function reads your DATABASE_URL configuration automatically set by Heroku
 # the return value is a string that will work with pg_connect
 function pg_connection_string() {
-  return "dbname=$dbName host=$dbHost port=5432 user=$dbUsername password=$dbPassword sslmode=require";
+  return "dbname=d270g74n5lg3ni host=ec2-50-16-218-45.compute-1.amazonaws.com port=5432 user=iuyrqoboxxpsri password=KuNsezJCq0rW4MeF2d2AyWKjE8 sslmode=require";
 }
  
 # Establish db connection
