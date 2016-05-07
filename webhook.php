@@ -34,7 +34,8 @@ if (!$db) {
     exit;
 }
 $query= pg_query($db, "SELECT * FROM players WHERE id=1");
-$counter=$query['userid'];
+$row=pg_fetch_assoc($query);
+$counter=$row['userid'];
 
 $isGame = array();
 $gameHoster = array();
