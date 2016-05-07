@@ -51,38 +51,48 @@ $ch = curl_init($url);
  */
 if(preg_match('[start game]', strtolower($message))) {
 	$gameID='mafia'.generateRandomString();
-	pg_query($db, "INSERT INTO players (userid,gameid,ishost) VALUES ('$sender','$gameID',TRUE);");
-	$message_to_reply = $gameID;
-} else if (preg_match('[mafia]', strtolower($message))) {
-	$query= pg_query($db, "SELECT * FROM players WHERE gameid='$message' AND ishost=TRUE;");
-	if (pg_num_rows($query)<1) {
-		$message_to_reply='invalid code!';
+	$query= pg_query($db, "SELECT * FROM players WHERE userid='$sender';");
+	if (pg_num_rows($query)>0) {
+		$message_to_reply='You are already in a game!';
 	} else {
-		$row=pg_fetch_assoc($query);
-		$game=$row['gameid'];
-		$hoster=$row['userid'];
-		pg_query($db, "INSERT INTO players (userid,gameid,ishost) VALUES ('$sender','$game',FALSE);");
-		$message_to_reply='You have been successfully added to game '.$game.' hosted by '.$hoster.'!';
-		$jsonData = '{
-			"recipient":{
-				"id":"'.$hoster.'"
-			},
-			"message":{
-				"text":"'.$sender.'has just been added to your game!'.'"
-			}
-		}';
+		pg_query($db, "INSERT INTO players (userid,gameid,ishost) VALUES ('$sender','$gameID',TRUE);");
+		$message_to_reply = $gameID;
+	}
+} else if (preg_match('[mafia]', strtolower($message))) {
+	$query= pg_query($db, "SELECT * FROM players WHERE userid='$sender';");
+	if (pg_num_rows($query)>0) {
+		$message_to_reply='You are already in a game!';
+	} else {
+		$query= pg_query($db, "SELECT * FROM players WHERE gameid='$message' AND ishost=TRUE;");
+		if (pg_num_rows($query)<1) {
+			$message_to_reply='invalid code!';
+		} else {
+			$row=pg_fetch_assoc($query);
+			$game=$row['gameid'];
+			$hoster=$row['userid'];
+			pg_query($db, "INSERT INTO players (userid,gameid,ishost) VALUES ('$sender','$game',FALSE);");
+			$message_to_reply='You have been successfully added to game '.$game.' hosted by '.$hoster.'!';
+			$jsonData = '{
+				"recipient":{
+					"id":"'.$hoster.'"
+				},
+				"message":{
+					"text":"'.$sender.'has just been added to your game!'.'"
+				}
+			}';
 //Encode the array into JSON.
-		$jsonDataEncoded = $jsonData;
+			$jsonDataEncoded = $jsonData;
 //Tell cURL that we want to send a POST request.
-		curl_setopt($ch, CURLOPT_POST, 1);
+			curl_setopt($ch, CURLOPT_POST, 1);
 //Attach our encoded JSON string to the POST fields.
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonDataEncoded);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonDataEncoded);
 //Set the content type to application/json
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+			curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 //curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
 //Execute the request
-		if(!empty($input['entry'][0]['messaging'][0]['message'])){
-			$result = curl_exec($ch);
+			if(!empty($input['entry'][0]['messaging'][0]['message'])) {
+				$result = curl_exec($ch);
+			}
 		}
 	}
 } else {
