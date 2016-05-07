@@ -4,7 +4,7 @@ $verify_token = "my_access_code";
 $hub_verify_token = null;
 
 function generateRandomString($length = 10) {
-	$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	$characters = '0123456789abcdefghijklmnopqrstuvwxyz';
 	$charactersLength = strlen($characters);
 	$randomString = '';
 	for ($i = 0; $i < $length; $i++) {
@@ -33,12 +33,10 @@ if (!$db) {
     echo "Database connection error.";
     exit;
 }
-$query= pg_query($db, "SELECT * FROM players WHERE id=1");
+$query= pg_query($db, "SELECT * FROM players");
 $row=pg_fetch_assoc($query);
 $counter=$row['userid'];
 
-$isGame = array();
-$gameHoster = array();
 $input = json_decode(file_get_contents('php://input'), true);
 $sender = $input['entry'][0]['messaging'][0]['sender']['id'];
 $message = $input['entry'][0]['messaging'][0]['message']['text'];
@@ -46,21 +44,10 @@ $message_to_reply = '';
 /**
  * Some Basic rules to validate incoming messages
  */
-/*if(preg_match('[time|current time|now]', strtolower($message))) {
-    // Make request to Time API
-    ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
-    $result = file_get_contents("http://www.timeapi.org/utc/now?format=%25a%20%25b%20%25d%20%25I:%25M:%25S%20%25Y");
-    if($result != '') {
-        $message_to_reply = $result;
-    }
-} else {
-    $message_to_reply = 'Huh! what do you mean?';
-}*/
 if(preg_match('[start game]', strtolower($message))) {
-	$gameID=generateRandomString();
-	$isGame[$gameID]=true;
-	$gameHoster[$gameID]=$sender;
-	$message_to_reply = $counter;
+	$gameID='mafia'.generateRandomString();
+	pg_query($db, "INSERT INTO players (userid,gameid,ishost) VALUES ($sender,$gameID,TRUE)");
+	$message_to_reply = $gameID;
 } else {
 	$message_to_reply = 'Mafia incoming! Stay tuned!';
 }
