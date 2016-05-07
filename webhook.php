@@ -48,6 +48,17 @@ if(preg_match('[start game]', strtolower($message))) {
 	$gameID='mafia'.generateRandomString();
 	pg_query($db, "INSERT INTO players (userid,gameid,ishost) VALUES ($sender,$gameID,TRUE)");
 	$message_to_reply = $gameID;
+} else if (preg_match('[mafia]', strtolower($message))) {
+	$query= pg_query($db, "SELECT * FROM players WHERE gameid=$message AND host=TRUE");
+	if (pg_num_rows($query)<1) {
+		$message_to_reply='invalid code!';
+	} else {
+		$row=pg_fetch_assoc($query);
+		$game=$row['gameid'];
+		$hoster=$row['userid'];
+		pg_query($db, "INSERT INTO players (userid,gameid,ishost) VALUES ($sender,$game,FALSE)");
+		$message_to_reply='You have been successfully added to game '.$game.' hosted by '.$hoster.'!';
+	}
 } else {
 	$message_to_reply = 'Mafia incoming! Stay tuned!';
 }
