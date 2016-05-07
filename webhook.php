@@ -33,7 +33,7 @@ if (!$db) {
     echo "Database connection error.";
     exit;
 }
-$counter = pg_query($db, "SELECT userID FROM players WHERE id=1");
+$counter = pg_query($db, "SELECT id FROM players WHERE id=1");
 
 $isGame = array();
 $gameHoster = array();
