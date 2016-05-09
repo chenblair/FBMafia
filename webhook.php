@@ -106,7 +106,7 @@ $jsonData = '{
 }';
 
 //Encode the array into JSON.
-global $jsonDataEncoded = $jsonData;
+$jsonDataEncoded = $jsonData;
 //Tell cURL that we want to send a POST request.
 curl_setopt($ch, CURLOPT_POST, 1);
 //Attach our encoded JSON string to the POST fields.
