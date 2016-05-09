@@ -68,10 +68,8 @@ if (!$db) {
 	echo "Database connection error.";
 	exit;
 }
-/**
- * Some Basic rules to validate incoming messages
- */
-if(preg_match('[start game]', strtolower($message))) {
+//starting a game
+if(preg_match('[host game]', strtolower($message))) { 
 	$gameID='mafia'.generateRandomString();
 	$query= pg_query($db, "SELECT * FROM players WHERE userid='$sender';");
 	if (pg_num_rows($query)>0) {
@@ -80,6 +78,7 @@ if(preg_match('[start game]', strtolower($message))) {
 		pg_query($db, "INSERT INTO players (userid,gameid,ishost) VALUES ('$sender','$gameID',TRUE);");
 		$message_to_reply = $gameID;
 	}
+//entering a game key
 } else if (preg_match('[mafia]', strtolower($message))) {
 	$query= pg_query($db, "SELECT * FROM players WHERE userid='$sender';");
 	if (pg_num_rows($query)>0) {
@@ -93,8 +92,10 @@ if(preg_match('[start game]', strtolower($message))) {
 			$game=$row['gameid'];
 			$hoster=$row['userid'];
 			pg_query($db, "INSERT INTO players (userid,gameid,ishost) VALUES ('$sender','$game',FALSE);");
+			$query= pg_query($db, "SELECT * FROM players WHERE gameid='$message'");
 			$message_to_reply='You have been successfully added to game '.$game.' hosted by '.$hoster.'!';
 			sendMessage($sender.'has just been added to your game!',$hoster);
+			sendMessage('You currently have '.pg_num_rows($query).' players. Say "start game" to start your game',$hoster);
 		}
 	}
 } else {
