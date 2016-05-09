@@ -91,17 +91,22 @@ if(preg_match('[start game]', strtolower($message))) {
 } else {
 	$message_to_reply = 'Mafia incoming! Stay tuned!';
 }
+function sendMessage($message,$recipient) {
+	global $ch;
+	global $input;
+	global $result;
 //The JSON data.
 $jsonData = '{
 	"recipient":{
-		"id":"'.$sender.'"
+		"id":"'.$recipient.'"
 	},
 	"message":{
-		"text":"'.$message_to_reply.'"
+		"text":"'.$message.'"
 	}
 }';
+
 //Encode the array into JSON.
-$jsonDataEncoded = $jsonData;
+global $jsonDataEncoded = $jsonData;
 //Tell cURL that we want to send a POST request.
 curl_setopt($ch, CURLOPT_POST, 1);
 //Attach our encoded JSON string to the POST fields.
@@ -113,3 +118,5 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 if(!empty($input['entry'][0]['messaging'][0]['message'])){
 	$result = curl_exec($ch);
 }
+}
+sendMessage($message_to_reply,$sender);
