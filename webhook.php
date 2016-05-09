@@ -94,8 +94,7 @@ if(preg_match('[host game]', strtolower($message))) {
 			pg_query($db, "INSERT INTO players (userid,gameid,ishost) VALUES ('$sender','$game',FALSE);");
 			$query= pg_query($db, "SELECT * FROM players WHERE gameid='$message'");
 			$message_to_reply='You have been successfully added to game '.$game.' hosted by '.$hoster.'!';
-			sendMessage($sender.'has just been added to your game!',$hoster);
-			sendMessage('You currently have '.pg_num_rows($query).' players. Say "start game" to start your game',$hoster);
+			sendMessage($sender.'has just been added to your game!\nYou currently have '.pg_num_rows($query).' players. Say "start game" to start your game',$hoster);
 		}
 	}
 } else {
