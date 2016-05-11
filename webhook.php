@@ -3,6 +3,13 @@ $access_token = "EAAH9ZB08zbAwBAPv86uoe8TZBKyMxr8ZANzUlDs9ujKWdIJpHZAktTun7A7UZA
 $verify_token = "my_access_code";
 $hub_verify_token = null;
 
+/*$fb = new Facebook\Facebook([
+  'app_id' => '{app-id}',
+  'app_secret' => '{app-secret}',
+  'default_graph_version' => 'v2.2',
+  ]);*/
+
+
 $input = json_decode(file_get_contents('php://input'), true);
 $sender = $input['entry'][0]['messaging'][0]['sender']['id'];
 $message = $input['entry'][0]['messaging'][0]['message']['text'];
@@ -91,7 +98,9 @@ if(preg_match('[host game]', strtolower($message))) {
 			pg_query($db, "INSERT INTO players (userid,gameid,ishost) VALUES ('$sender','$game',FALSE);");
 			$query= pg_query($db, "SELECT * FROM players WHERE gameid='$message'");
 			$message_to_reply='You have been successfully added to game '.$game.' hosted by '.$hoster.'!';
-			sendMessage($sender.'has just been added to your game!\nYou currently have '.pg_num_rows($query).' players. Say "start game" to start your game',$hoster);
+			sendMessage($sender.'has just been added to your game!',$hoster);
+			sendMessage('You currently have '.pg_num_rows($query),$hoster);
+			sendMessage(' players. Say "start game" to start your game',$hoster);
 		}
 	}
 } else {
