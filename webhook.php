@@ -3,6 +3,13 @@ $access_token = "EAAH9ZB08zbAwBAPv86uoe8TZBKyMxr8ZANzUlDs9ujKWdIJpHZAktTun7A7UZA
 $verify_token = "my_access_code";
 $hub_verify_token = null;
 
+# Establish db connection
+$db = pg_connect(pg_connection_string());
+if (!$db) {
+	echo "Database connection error.";
+	exit;
+}
+
 /*$fb = new Facebook\Facebook([
   'app_id' => '{app-id}',
   'app_secret' => '{app-secret}',
@@ -40,6 +47,25 @@ $jsonData = '{
 		"text":"'.$message.'"
 	}
 }';
+function sendGameMessage($message,$gameid)
+{
+	global $db;
+	$query = pg_query($db, "SELECT * FROM players WHERE gameid=$gameid;");
+	while ($row = pg_fetch_array($query)) {
+		sendMessage($message,$row['userid']);
+	}
+}
+function isHost($sender)
+{
+	global $db;
+	$query = pg_query($db, "SELECT * FROM players WHERE ishost=TRUE;");
+	if ($query['userid']==$sender)
+	{
+		return true;
+	} else {
+		return false;
+	}
+}
 
 //Encode the array into JSON.
 $jsonDataEncoded = $jsonData;
@@ -66,12 +92,6 @@ $myPDO = new PDO('pgsql:host='+$dbHost+';dbname='+$dbName, $dbUsername, $dbName)
 function pg_connection_string() {
 	return "dbname=d270g74n5lg3ni host=ec2-50-16-218-45.compute-1.amazonaws.com port=5432 user=iuyrqoboxxpsri password=KuNsezJCq0rW4MeF2d2AyWKjE8 sslmode=require";
 }
-# Establish db connection
-$db = pg_connect(pg_connection_string());
-if (!$db) {
-	echo "Database connection error.";
-	exit;
-}
 //starting a game
 if(preg_match('[host game]', strtolower($message))) { 
 	$gameID='mafia'.generateRandomString();
@@ -83,6 +103,12 @@ if(preg_match('[host game]', strtolower($message))) {
 		$message_to_reply = $gameID;
 	}
 //entering a game key
+} else if (preg_match('[start game]', strtolower($message))) {
+	if (isHost($sender)) {
+		
+	} else {
+		$message_to_reply='You are not the host of this game!';
+	}
 } else if (preg_match('[mafia]', strtolower($message))) {
 	$query= pg_query($db, "SELECT * FROM players WHERE userid='$sender';");
 	if (pg_num_rows($query)>0) {
