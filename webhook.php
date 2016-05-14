@@ -55,16 +55,6 @@ function sendGameMessage($message,$gameid)
 		sendMessage($message,$row['userid']);
 	}
 }
-function isHost($sender)
-{
-	global $db;
-	$query = pg_query($db, "SELECT * FROM players WHERE ishost=TRUE;");
-	if ($query['userid']==$sender) {
-		return true;
-	} else {
-		return false;
-	}
-}
 
 //Encode the array into JSON.
 $jsonDataEncoded = $jsonData;
@@ -103,9 +93,9 @@ if(preg_match('[host game]', strtolower($message))) {
 	}
 //entering a game key
 } else if (preg_match('[start game]', strtolower($message))) {
-	$isHost=isHost($sender);
-	if ($isHost) {
-
+	$query = pg_query($db, "SELECT * FROM players WHERE ishost=TRUE;");
+	if ($query['userid']==$sender) {
+		
 	} else {
 		$message_to_reply='You are not the host of this game!';
 	}
